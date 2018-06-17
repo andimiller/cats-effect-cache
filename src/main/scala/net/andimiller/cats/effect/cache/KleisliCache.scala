@@ -37,13 +37,18 @@ object KleisliCache {
 
   }
 
-  case class ResultWithExpiry[R](value: R, expiry: Duration)
+  case class ResultWithExpiry[R](value: R, expiry: FiniteDuration)
 
-  def withExpiry[E[_], I, O](k: Kleisli[E, I, ResultWithExpiry[O]])(
+  def withExpiry[E[_], I, O](k: Kleisli[E, I, ResultWithExpiry[O]],
+                             size: Option[Int] = Some(1000))(
       implicit E: Effect[E]): Kleisli[E, I, O] = {
-    val cache: LoadingCache[I, ResultWithExpiry[O]] = Caffeine
-      .newBuilder()
-      .expireAfter(new Expiry[I, ResultWithExpiry[O]] {
+
+    val cache: LoadingCache[I, ResultWithExpiry[O]] = {
+      size match {
+        case Some(s) => Caffeine.newBuilder().maximumSize(s)
+        case None    => Caffeine.newBuilder()
+      }
+    }.expireAfter(new Expiry[I, ResultWithExpiry[O]] {
         override def expireAfterCreate(key: I,
                                        value: ResultWithExpiry[O],
                                        currentTime: Long): Long = {

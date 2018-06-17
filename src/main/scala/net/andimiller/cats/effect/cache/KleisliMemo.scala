@@ -18,7 +18,7 @@ object KleisliMemo {
     * @tparam O
     * @return
     */
-  def apply[E[_]: Monad, I, O](k: Kleisli[E, I, O],
+  def apply[E[_], I, O](k: Kleisli[E, I, O],
                                t: TrieMap[I, O] = TrieMap[I, O]())(
       implicit E: Effect[E]): Kleisli[E, I, O] = {
     Kleisli { i: I =>
