@@ -1,3 +1,5 @@
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4")
+
 lazy val CatsEffectVersion = "1.0.0-RC2"
 lazy val ScalaTestVersion = "3.0.3"
 lazy val ScalaCheckVersion = "1.13.4"
